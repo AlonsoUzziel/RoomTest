@@ -24,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
     int sumSend = 0, sumPending = 0;
     boolean isConnected = true;
     ItemRepository repo;
-    private WifiManager wifiManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,26 +42,28 @@ public class MainActivity extends AppCompatActivity {
             if(isConnected) {
                 sumSend++;
                 // simulated send to ws
-                tvSumSend.setText("Items enviados: " + sumSend);
+                String message = getString(R.string.txtSendItems) + sumSend;
+                tvSumSend.setText(message);
             }
             else{
                 sumPending++;
                 insertItem(sumPending);
-                tvSumPending.setText("Items pendientes: " + sumPending);
+                String message = getString(R.string.txtPendingItems) + sumPending;
+                tvSumPending.setText(message);
             }
         });
 
 
         stateWifi = findViewById(R.id.tvStateWifi);
-        wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
 
         if (wifiManager.isWifiEnabled())
         {
-            stateWifi.setText("Conectado");
+            stateWifi.setText(getString(R.string.txtConnected));
             isConnected = true;
         }
         else{
-            stateWifi.setText("Sin conexión a internet");
+            stateWifi.setText(getString(R.string.txtUnConnected));
             verifyItems();
             isConnected = false;
         }
@@ -89,12 +91,12 @@ public class MainActivity extends AppCompatActivity {
 
             switch (wifiStateExtra) {
                 case WifiManager.WIFI_STATE_ENABLED:
-                    stateWifi.setText("Conectado");
+                    stateWifi.setText(getString(R.string.txtConnected));
                     verifyItemsForSend();
                     isConnected = true;
                     break;
                 case WifiManager.WIFI_STATE_DISABLED:
-                    stateWifi.setText("Sin conexión a internet");
+                    stateWifi.setText(getString(R.string.txtUnConnected));
                     isConnected = false;
                     break;
             }
@@ -107,7 +109,8 @@ public class MainActivity extends AppCompatActivity {
 
         if (items.size() > 0) {
             sumPending = items.size();
-            tvSumPending.setText("Items pendientes: " + sumPending);
+            String message = getString(R.string.txtPendingItems) + sumPending;
+            tvSumPending.setText(message);
         }
     }
 
@@ -131,12 +134,15 @@ public class MainActivity extends AppCompatActivity {
 
                     for (Item item : items) {
                         Log.d("Message ::", "Item send: " + item.getId());
+                        // simulate send to ws
                         repo.delete(item);
                         sumSend++;
                         sumPending--;
                     }
-                    tvSumSend.setText("Items enviados: " + sumSend);
-                    tvSumPending.setText("Items pendientes: " + sumPending);
+                    String messageSend = getString(R.string.txtSendItems) + sumSend;
+                    tvSumSend.setText(messageSend);
+                    String message = getString(R.string.txtPendingItems) + sumPending;
+                    tvSumPending.setText(message);
                 }
             });
         }

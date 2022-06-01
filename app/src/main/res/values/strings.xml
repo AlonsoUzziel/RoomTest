@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">exampleRoom</string>
+    <string name="txtConnected">Conectado</string>
+    <string name="txtUnConnected">Sin conexión a internet</string>
+    <string name="txtSendItems">Items enviados: </string>
+    <string name="txtPendingItems">Items pendientes: </string>
+
 </resources>
