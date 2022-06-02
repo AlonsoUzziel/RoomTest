@@ -25,6 +25,6 @@ public interface EntryDAO {
     @Delete
     void delete(EntryDB item);
 
-    @Query("SELECT * FROM Entry WHERE API LIKE '%' || :search || '%' OR Description LIKE '%' || :search || '%' ")
+    @Query("SELECT * FROM Entry WHERE Description LIKE '%' || :search || '%' ")
     List<EntryDB> getLikeAPi(String search);
 }

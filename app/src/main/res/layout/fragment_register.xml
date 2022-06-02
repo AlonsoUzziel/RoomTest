@@ -58,11 +58,12 @@ tools:context=".ui.RegisterFragment">
             android:hint="@string/txtSearch"
             />
         <TextView
-            android:layout_width="48dp"
-            android:layout_height="48dp"
+            android:layout_width="27dp"
+            android:layout_height="27dp"
             android:id="@+id/btnSearch"
             android:layout_marginStart="-45dp"
             android:layout_marginTop="-9dp"
+            android:padding="3dp"
             android:background="@drawable/icon_search"
             />
     </LinearLayout>
