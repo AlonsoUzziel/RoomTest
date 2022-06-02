@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:app="http://schemas.android.com/apk/res-auto"
+xmlns:tools="http://schemas.android.com/tools"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+tools:context=".ui.RegisterFragment">
+
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="21dp"
+    android:paddingBottom="51dp"
+    android:orientation="vertical"
+    >
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="2"
+        android:paddingBottom="12dp"
+        >
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/txtSendItems"
+            android:id="@+id/tvSendItems"
+            />
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/txtPendingItems"
+            android:id="@+id/tvPendingItems"
+            />
+    </LinearLayout>
+    <TextView
+        android:id="@+id/tvStateWifi"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/txtConnected"
+        android:layout_gravity="center"
+        android:layout_margin="12dp"
+        />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        >
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="42dp"
+            android:id="@+id/etSearch"
+            android:padding="6dp"
+            android:paddingStart="12dp"
+            android:paddingEnd="48dp"
+            android:hint="@string/txtSearch"
+            />
+        <TextView
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:id="@+id/btnSearch"
+            android:layout_marginStart="-45dp"
+            android:layout_marginTop="-9dp"
+            android:background="@drawable/icon_search"
+            />
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/list_entries"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="3dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+
+</LinearLayout>
+
+</ScrollView>

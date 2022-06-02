@@ -1,8 +1,13 @@
 <resources>
     <string name="app_name">exampleRoom</string>
     <string name="txtConnected">Conectado</string>
-    <string name="txtUnConnected">Sin conexión a internet</string>
+    <string name="txtUnConnected">Trabajando sin conexión</string>
     <string name="txtSendItems">Items enviados: </string>
     <string name="txtPendingItems">Items pendientes: </string>
-
+    <string name="endpointBase">https://api.publicapis.org/</string>
+    <string name="txtRegister">Registrar</string>
+    <string name="txtSearch">Buscar</string>
+    <string name="txtInitial">Inicio</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

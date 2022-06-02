@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:app="http://schemas.android.com/apk/res-auto"
+xmlns:tools="http://schemas.android.com/tools"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+tools:context=".ui.HomeFragment">
+
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="21dp"
+    android:paddingBottom="51dp"
+    android:orientation="vertical"
+    >
+
+    <TextView
+        android:id="@+id/tvStateWifi"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/txtConnected"
+        android:gravity="center"
+        android:layout_marginBottom="51dp"
+        />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/tvNext"
+        android:text="@string/txtRegister"
+        android:gravity="center"
+        android:layout_margin="9dp"
+        android:background="@color/purple_500"
+        android:textColor="@color/white"
+        android:padding="15dp"
+        android:textSize="18sp"
+        />
+
+</LinearLayout>
+
+</ScrollView>
