@@ -1,9 +1,7 @@
 package com.example.exampleroom.ui;
 
 import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
@@ -21,18 +19,19 @@ import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.exampleroom.BroadcastWifiManager;
 import com.example.exampleroom.IO.PxApiAdapter;
 import com.example.exampleroom.R;
 import com.example.exampleroom.database.AppDataBase;
 import com.example.exampleroom.database.DAO.EntryDAO;
 import com.example.exampleroom.database.DAO.ItemDAO;
+import com.example.exampleroom.database.Entity.EntryDB;
 import com.example.exampleroom.database.Entity.Item;
 import com.example.exampleroom.database.repository.EntryRepository;
 import com.example.exampleroom.database.repository.EntryRepositoryImpl;
 import com.example.exampleroom.database.repository.ItemRepository;
 import com.example.exampleroom.database.repository.ItemRepositoryImpl;
 import com.example.exampleroom.models.Entry;
-import com.example.exampleroom.database.Entity.EntryDB;
 import com.example.exampleroom.models.PublicApi;
 
 import java.util.ArrayList;
@@ -47,7 +46,8 @@ import retrofit2.Response;
  * Use the {@link RegisterFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class RegisterFragment extends Fragment implements RvEntryAdapter.EntryAdapterListener {
+public class RegisterFragment extends Fragment implements RvEntryAdapter.EntryAdapterListener
+                                                        , BroadcastWifiManager.BroadcastListener {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -69,6 +69,7 @@ public class RegisterFragment extends Fragment implements RvEntryAdapter.EntryAd
     private int page = 1;
     RvEntryAdapter adapter;
     EditText etSearch;
+    public BroadcastReceiver wifiStateReceiver;
     private boolean isLoading = false;
 
     public RegisterFragment() {
@@ -96,6 +97,8 @@ public class RegisterFragment extends Fragment implements RvEntryAdapter.EntryAd
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        BroadcastWifiManager broadcastWifiManager = new BroadcastWifiManager(this::isConnected);
+        wifiStateReceiver = broadcastWifiManager.wifiStateReceiver;
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
@@ -122,40 +125,10 @@ public class RegisterFragment extends Fragment implements RvEntryAdapter.EntryAd
         list.setAdapter(adapter);
         tvSendItem = v.findViewById(R.id.tvSendItems);
         tvPendingItem = v.findViewById(R.id.tvPendingItems);
-        /*
-        tvAddItem.setOnClickListener(view -> {
-            if(isConnected) {
-                sumSend++;
-                // simulated send to ws
-                String message = getString(R.string.txtSendItems) + sumSend;
-                tvSumSend.setText(message);
-            }
-            else{
-                sumPending++;
-                insertItem(sumPending);
-                String message = getString(R.string.txtPendingItems) + sumPending;
-                tvSumPending.setText(message);
-            }
-        });
-
-         */
 
         btnSearch = v.findViewById(R.id.btnSearch);
         etSearch = v.findViewById(R.id.etSearch);
         stateWifi = v.findViewById(R.id.tvStateWifi);
-        WifiManager wifiManager = (WifiManager) getActivity().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-
-        if (wifiManager.isWifiEnabled())
-        {
-            stateWifi.setText(getString(R.string.txtConnected));
-            isConnected = true;
-            getAllEntries();
-        }
-        else{
-            stateWifi.setText(getString(R.string.txtUnConnected));
-            verifyItems();
-            isConnected = false;
-        }
 
         btnSearch.setOnClickListener(view ->{
             String search = etSearch.getText().toString();
@@ -312,26 +285,6 @@ public class RegisterFragment extends Fragment implements RvEntryAdapter.EntryAd
         getActivity().unregisterReceiver(wifiStateReceiver);
     }
 
-    private BroadcastReceiver wifiStateReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            int wifiStateExtra  = intent.getIntExtra(WifiManager.EXTRA_WIFI_STATE,
-                    WifiManager.WIFI_STATE_UNKNOWN);
-
-            switch (wifiStateExtra) {
-                case WifiManager.WIFI_STATE_ENABLED:
-                    stateWifi.setText(getString(R.string.txtConnected));
-                    verifyItemsForSend();
-                    isConnected = true;
-                    break;
-                case WifiManager.WIFI_STATE_DISABLED:
-                    stateWifi.setText(getString(R.string.txtUnConnected));
-                    isConnected = false;
-                    break;
-            }
-        }
-    };
-
     private void verifyItems() {
         List<Item> items = repoItem.getAll();
         Log.d("Message ::","Items pending size: " + items.size());
@@ -356,7 +309,7 @@ public class RegisterFragment extends Fragment implements RvEntryAdapter.EntryAd
     private void sendData(List<Item> items)
     {
         try {
-            getActivity().runOnUiThread(new Runnable() {
+            new Thread(new Runnable() {
                 @Override
                 public void run() {
                     Log.d("Message ::", "run ");
@@ -364,16 +317,22 @@ public class RegisterFragment extends Fragment implements RvEntryAdapter.EntryAd
                     for (Item item : items) {
                         Log.d("Message ::", "Item send: " + item.getId());
                         // simulate send to ws
+                        try {
+                            Thread.sleep(999);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
                         repoItem.delete(item);
                         sumSend++;
                         sumPending--;
+                        String messageSend = getString(R.string.txtSendItems) + sumSend;
+                        tvSendItem.setText(messageSend);
+                        String message = getString(R.string.txtPendingItems) + sumPending;
+                        tvPendingItem.setText(message);
                     }
-                    String messageSend = getString(R.string.txtSendItems) + sumSend;
-                    tvSendItem.setText(messageSend);
-                    String message = getString(R.string.txtPendingItems) + sumPending;
-                    tvPendingItem.setText(message);
+
                 }
-            });
+            }).start();
         }
         catch (Exception e)
         {
@@ -390,5 +349,20 @@ public class RegisterFragment extends Fragment implements RvEntryAdapter.EntryAd
         Log.d("Message ::","Item for insert: " + num);
 
         repoItem.insert(item);
+    }
+
+    @Override
+    public void isConnected(boolean status) {
+        isConnected = status;
+        if (status)
+        {
+            stateWifi.setText(getString(R.string.txtConnected));
+            getAllEntries();
+            verifyItemsForSend();
+        }
+        else {
+            stateWifi.setText(getString(R.string.txtUnConnected));
+            verifyItems();
+        }
     }
 }
